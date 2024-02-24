@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_FAKER_TESTS DEFAULT ON)
+option(FAKER_USE_OWN_FMT DEFAULT ON)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++20 /permissive- /bigobj")
@@ -115,9 +116,11 @@ target_include_directories(
 
 if(APPLE OR (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
                                                       VERSION_LESS 12))
+    if (FAKER_USE_OWN_FMT)
+        add_subdirectory(externals/fmt)
+        set(FMT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/externals/fmt/include")
+    endif()
 
-    add_subdirectory(externals/fmt)
-    set(FMT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/externals/fmt/include")
     target_link_libraries(${LIBRARY_NAME} PRIVATE fmt)
 endif()
 
